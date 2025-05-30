@@ -1,10 +1,8 @@
-// src/app/layout.tsx
+// src/app/layout.tsx (sin cambios)
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import '@/styles/globals.css'; // Asegúrate de que la ruta a tu CSS sea correcta
-import { Providers } from '@/components/providers'; // Importa tu componente de providers
-import Header from '@/components/header'; // Importa tu componente de Header
-import Footer from '@/components/footer'; // Importa tu componente de Footer
+import '@/styles/globals.css';
+import MainLayoutClient from '../components/MainLayoutClient'; // Ajusta la ruta si es necesario
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,13 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        < Header /> {/* Incluye el Header en el layout */}
-        <div style={{ paddingTop: '150px' /* Adjust based on your header height */ }}>
-          <Providers> {/* Envuelve tus hijos con el Provider de Redux */}
-            {children}
-          </Providers>
-        </div>
-        <Footer/>
+        <MainLayoutClient>
+          {children}
+        </MainLayoutClient>
       </body>
     </html>
   );
