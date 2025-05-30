@@ -2,7 +2,7 @@
 
 'use client';
 
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -12,12 +12,43 @@ const Header: React.FC = () => {
     
     console.log("Header component rendering");
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
     const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+    const [visible, setVisible] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+    const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up');
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
+
+    useEffect(() => {
+    
+        setLastScrollY(window.scrollY);
+        const controlHeader = () => {
+            const currentScrollY = window.scrollY;
+
+            //Make header visible when scrolling up
+            if(currentScrollY < lastScrollY) {
+                setScrollDirection('up');
+                setVisible(true);
+            }
+            else 
+            //Hide header when scrolling down
+            {
+                setScrollDirection('down');
+                setVisible(false);
+            }
+
+            setLastScrollY(currentScrollY);
+        };
+        window.addEventListener('scroll', controlHeader);
+        
+
+        return ()=>{
+            window.removeEventListener('scroll', controlHeader);
+        };
+
+    }, [lastScrollY])
 
     return(
         <header style = {{
@@ -28,9 +59,15 @@ const Header: React.FC = () => {
             backgroundColor: '#282c34',
             color: 'white',
             boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-            position: 'sticky',
-            top: 0,
+            position: 'fixed',
+            top: visible ? '0' : '-150px',
             zIndex: 1000,
+            marginBottom: 'auto',
+            transition: 'top 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+            left: 0,
+            right: 0,
+            width: '100%',
+    
         }}>
             {/* Lado Izquierdo: Menu Desplegable*/}
             <div style ={{position: 'relative'}}>
@@ -110,7 +147,7 @@ const Header: React.FC = () => {
                                 onMouseEnter = {()=> setHoveredLink('chatBot')}
                                 onMouseLeave = {()=> setHoveredLink(null)}
                                 >
-                                <Link href="/chat" onClick={toggleMenu} 
+                                <Link href="/chatBot" onClick={toggleMenu} 
                                 style={{ 
                                     color: hoveredLink === 'chatBot' ? '#61dafb' : 'white', 
                                     textDecoration: 'none', 
@@ -127,7 +164,7 @@ const Header: React.FC = () => {
 
             {/*Centro: Imagen del Logo*/}
             <div style = {{flexGrow: 1, textAlign: 'center'}}>
-                <h2 style={{ margin:0, color: '61dafb'}}> Mi App Redux</h2>
+                <h2 style={{ margin:0, color: '#61dafb'}}> Mi App Redux</h2>
             </div>
 
             {/* Lado Derecho: Icono de Iniciar Sesión*/ }
