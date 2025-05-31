@@ -2,7 +2,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -10,10 +10,32 @@ import Link from 'next/link';
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const [visible, setVisible] = useState(true);
+  const [lastScrollTop, setLastScrollTop] = useState(0);
+
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if (scrollTop > lastScrollTop) {
+        // Scrolling down
+        setVisible(false);
+      } else {
+        // Scrolling up
+        setVisible(true);
+      }
+      setLastScrollTop(scrollTop <= 0 ? 0 : scrollTop); // For Mobile or negative scrolling
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollTop]);
 
   return (
     <header style={{
@@ -24,9 +46,12 @@ const Header: React.FC = () => {
       backgroundColor: '#282c34',
       color: 'white',
       boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-      position: 'sticky',
-      top: 0,
+      position: 'fixed',
+      top: visible ? '0': '-100px', // Oculta el header al hacer scroll hacia abajo
       zIndex: 1000,
+      transition: 'top 0.3s ease-in-out',
+      left: 0,
+      width: '100%',
     }}>
       {/* Lado Izquierdo: Menú Desplegable */}
       <div style={{ position: 'relative' }}>

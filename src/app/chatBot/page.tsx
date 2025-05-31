@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { sendMessage, clearChat } from "@/store/chatSlice";
+import sendMessage, { clearChat } from "@/store/chatSlice";
 import type { RootState, AppDispatch } from "@/store/store";
 
 // Create a typed dispatch hook to handle thunk actions correctly
